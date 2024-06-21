@@ -14,7 +14,8 @@ class FirestoreDatabase {
     return posts.add({
       'UserEmail': user!.email,
       'message': message,
-      'timestamp': Timestamp.now()
+      'timestamp': Timestamp.now(),
+      'likes': []
     });
   }
 

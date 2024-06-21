@@ -61,6 +61,7 @@ class _HomePageState extends State<HomePage> {
         ),
         drawer: const MyDrawer(),
         body: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
             StreamBuilder(
                 stream: database.getPostsStream(),
@@ -99,9 +100,11 @@ class _HomePageState extends State<HomePage> {
                             Timestamp timestamp = post['timestamp'];
 
                             return MyListTile(
-                              title: message,
-                              subtitle: email,
-                              trailingText: timestamp.toDate().toString(),
+                              title: email,
+                              subtitle: message,
+                              timestamp: timestamp,
+                              postId: post.id,
+                              likes: List<String>.from(post['likes'] ?? []),
                             );
                           }));
                 }),
