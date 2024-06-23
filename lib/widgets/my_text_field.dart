@@ -17,22 +17,25 @@ class MyTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      onChanged: onChanged,
-      autofocus: false,
-      focusNode: focusNode,
-      validator: validator,
-      controller: controller,
-      obscureText: obscureText,
-      decoration: InputDecoration(
-          disabledBorder: OutlineInputBorder(
-              borderSide:
-                  BorderSide(color: Theme.of(context).colorScheme.background)),
-          fillColor: Theme.of(context).colorScheme.primary,
-          filled: true,
-          hintText: hintText,
-          hintStyle: TextStyle(color: Theme.of(context).colorScheme.secondary),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12))),
+    return Padding(
+      padding: const EdgeInsets.only(top: 5),
+      child: TextFormField(
+        onChanged: onChanged,
+        autofocus: false,
+        focusNode: focusNode,
+        validator: validator,
+        controller: controller,
+        obscureText: obscureText,
+        decoration: InputDecoration(
+            disabledBorder: OutlineInputBorder(
+                borderSide:
+                    BorderSide(color: Theme.of(context).colorScheme.background)),
+            fillColor: Theme.of(context).colorScheme.primary,
+            filled: true,
+            hintText: hintText,
+            hintStyle: TextStyle(color: Theme.of(context).colorScheme.secondary),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12))),
+      ),
     );
   }
 }

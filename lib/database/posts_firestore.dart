@@ -29,7 +29,6 @@ class FirestoreDatabase {
   }
 
   Stream<QuerySnapshot> getUserPostsStream() {
-    print(user!.email);
     final userPostsStream = FirebaseFirestore.instance
         .collection("posts")
         .where("UserEmail", isEqualTo: user!.email)
