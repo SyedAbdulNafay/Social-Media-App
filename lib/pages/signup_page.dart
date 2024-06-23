@@ -6,14 +6,13 @@ import 'package:social_media_app/widgets/my_text_field.dart';
 
 class SignUpPage extends StatefulWidget {
   final void Function()? onTap;
-  SignUpPage({super.key, required this.onTap});
+  const SignUpPage({super.key, required this.onTap});
 
   @override
   State<SignUpPage> createState() => _SignUpPageState();
 }
 
 class _SignUpPageState extends State<SignUpPage> {
-  late FocusNode _focusNode;
   final _formKey = GlobalKey<FormState>();
   bool isSigningIn = false;
 
@@ -43,6 +42,7 @@ class _SignUpPageState extends State<SignUpPage> {
           .set({
         'email': userCredential.user!.email,
         'username': _usernamecontroller.text,
+        'bio': 'Empty bio...'
       });
     }
   }
@@ -126,7 +126,6 @@ class _SignUpPageState extends State<SignUpPage> {
 
                     //username textfield
                     MyTextField(
-                      focusNode: _focusNode,
                         hintText: "Username",
                         obscureText: false,
                         controller: _usernamecontroller),
@@ -136,7 +135,6 @@ class _SignUpPageState extends State<SignUpPage> {
 
                     //email text field
                     MyTextField(
-                      focusNode: _focusNode,
                         validator: emailValidator,
                         hintText: "Email",
                         obscureText: false,
@@ -147,7 +145,6 @@ class _SignUpPageState extends State<SignUpPage> {
 
                     //password text field
                     MyTextField(
-                      focusNode: _focusNode,
                         validator: passwordValidator,
                         hintText: "Password",
                         obscureText: true,
@@ -158,7 +155,6 @@ class _SignUpPageState extends State<SignUpPage> {
 
                     //confirm password text field
                     MyTextField(
-                      focusNode: _focusNode,
                         validator: confirmPWValidator,
                         hintText: "Confirm Password",
                         obscureText: true,

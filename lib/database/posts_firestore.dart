@@ -27,4 +27,14 @@ class FirestoreDatabase {
         .snapshots();
     return postsStream;
   }
+
+  Stream<QuerySnapshot> getUserPostsStream() {
+    print(user!.email);
+    final userPostsStream = FirebaseFirestore.instance
+        .collection("posts")
+        .where("UserEmail", isEqualTo: user!.email)
+        .orderBy('timestamp', descending: true)
+        .snapshots();
+    return userPostsStream;
+  }
 }

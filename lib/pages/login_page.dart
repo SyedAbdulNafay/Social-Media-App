@@ -12,7 +12,6 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  late FocusNode _focusNode;
   final _formKey = GlobalKey<FormState>();
 
   bool isLoggingIn = false;
@@ -73,7 +72,6 @@ class _LoginPageState extends State<LoginPage> {
 
                     //email text field
                     MyTextField(
-                        focusNode: _focusNode,
                         hintText: "Email",
                         obscureText: false,
                         controller: _emailcontroller),
@@ -83,7 +81,6 @@ class _LoginPageState extends State<LoginPage> {
 
                     //password text field
                     MyTextField(
-                        focusNode: _focusNode,
                         hintText: "Password",
                         obscureText: true,
                         controller: _passwordcontroller),

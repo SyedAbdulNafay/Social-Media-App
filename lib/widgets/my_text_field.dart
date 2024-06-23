@@ -2,21 +2,24 @@ import 'package:flutter/material.dart';
 
 class MyTextField extends StatelessWidget {
   final String? Function(String?)? validator;
-  final String hintText;
+  final String? hintText;
   final bool obscureText;
-  final TextEditingController controller;
-  final FocusNode focusNode;
+  final TextEditingController? controller;
+  final FocusNode? focusNode;
+  final void Function(String)? onChanged;
   const MyTextField(
       {super.key,
-      required this.hintText,
+      this.hintText,
       required this.obscureText,
-      required this.controller,
+      this.controller,
       this.validator,
-      required this.focusNode});
+      this.focusNode, this.onChanged});
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      onChanged: onChanged,
+      autofocus: false,
       focusNode: focusNode,
       validator: validator,
       controller: controller,
