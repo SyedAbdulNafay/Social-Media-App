@@ -1,8 +1,11 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:social_media_app/widgets/my_comment_box.dart';
 import 'package:social_media_app/widgets/my_comment_button.dart';
+import 'package:social_media_app/widgets/my_delete_button.dart';
 import 'package:social_media_app/widgets/my_like_button.dart';
 import 'package:social_media_app/widgets/my_post_button.dart';
 import 'package:social_media_app/widgets/my_text_field.dart';
@@ -112,7 +115,8 @@ class _MyListTileState extends State<MyListTile> {
                                   }
                                   return ListView(
                                     shrinkWrap: true,
-                                    physics: const AlwaysScrollableScrollPhysics(),
+                                    physics:
+                                        const AlwaysScrollableScrollPhysics(),
                                     children: snapshot.data!.docs.map((doc) {
                                       final commentData = doc.data();
 
@@ -147,6 +151,57 @@ class _MyListTileState extends State<MyListTile> {
         });
   }
 
+  void deletePost() {
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+              title: const Text("Delete Post"),
+              content: const Text("Are you sure you want to delete post?"),
+              actions: [
+                TextButton(
+                    style: ButtonStyle(
+                        backgroundColor: WidgetStateProperty.all(
+                            Theme.of(context).colorScheme.primary),
+                        foregroundColor: WidgetStateProperty.all(
+                            Theme.of(context).colorScheme.secondary)),
+                    onPressed: () async {
+                      final commentDocs = await FirebaseFirestore.instance
+                          .collection("posts")
+                          .doc(widget.postId)
+                          .collection("comments")
+                          .get();
+
+                      for (var doc in commentDocs.docs) {
+                        await FirebaseFirestore.instance
+                            .collection("posts")
+                            .doc(widget.postId)
+                            .collection("comments")
+                            .doc(doc.id)
+                            .delete();
+                      }
+
+                      FirebaseFirestore.instance
+                          .collection("posts")
+                          .doc(widget.postId)
+                          .delete()
+                          .then((value) => print("post deleted"))
+                          .catchError((error) =>
+                              print("failed to delete post: $error"));
+                      Navigator.pop(context);
+                    },
+                    child: const Text("Yes")),
+                TextButton(
+                    style: ButtonStyle(
+                        backgroundColor: WidgetStateProperty.all(
+                            Theme.of(context).colorScheme.primary),
+                        foregroundColor: WidgetStateProperty.all(
+                            Theme.of(context).colorScheme.secondary)),
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text("No")),
+              ],
+            ));
+  }
+
   void toggleLike() {
     setState(() {
       isLiked = !isLiked;
@@ -172,8 +227,8 @@ class _MyListTileState extends State<MyListTile> {
     String formattedDate = '${dateTime.day}/${dateTime.month}/${dateTime.year}';
 
     return Padding(
-      padding: const EdgeInsets.only(left: 25, right: 25, bottom: 10),
-      child: Container(
+        padding: const EdgeInsets.only(left: 25, right: 25, bottom: 10),
+        child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.primary,
@@ -181,10 +236,19 @@ class _MyListTileState extends State<MyListTile> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                widget.title,
-                style:
-                    TextStyle(color: Theme.of(context).colorScheme.secondary),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    widget.title,
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.secondary),
+                  ),
+                  if (widget.title == currentUser!.email)
+                    MyDeleteButton(
+                      onTap: deletePost,
+                    )
+                ],
               ),
               Text(
                 widget.subtitle,
@@ -233,7 +297,7 @@ class _MyListTileState extends State<MyListTile> {
                 ],
               )
             ],
-          )),
-    );
+          ),
+        ));
   }
 }
