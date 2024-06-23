@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:social_media_app/database/posts_firestore.dart';
+import 'package:social_media_app/theme/theme_manager.dart';
 import 'package:social_media_app/widgets/my_list_tile.dart';
 import 'package:social_media_app/widgets/my_post_button.dart';
 import 'package:social_media_app/widgets/my_text_field.dart';
@@ -35,12 +37,22 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final themeManager = Provider.of<ThemeManager>(context);
     return GestureDetector(
       onTap: () {
         _focusNode.unfocus();
       },
       child: Scaffold(
         appBar: AppBar(
+          actions: [
+            IconButton(
+              icon: Icon(
+                  themeManager.isDarkMode ? Icons.light_mode : Icons.dark_mode),
+              onPressed: () {
+                themeManager.toggleTheme();
+              },
+            )
+          ],
           leading: Builder(builder: (context) {
             return IconButton(
               icon: const Icon(

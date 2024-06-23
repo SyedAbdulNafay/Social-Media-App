@@ -12,7 +12,7 @@ class CommentButton extends StatelessWidget {
       onTap: onTap,
       child: Column(
         children: [
-          const Icon(Icons.comment),
+           Icon(Icons.comment, color: Theme.of(context).colorScheme.secondary,),
           StreamBuilder(
               stream: FirebaseFirestore.instance
                   .collection("posts")

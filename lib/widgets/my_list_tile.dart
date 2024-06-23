@@ -128,6 +128,7 @@ class _MyListTileState extends State<MyListTile> {
                       ),
                     ),
                     Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Expanded(
                           child: MyTextField(
@@ -144,44 +145,6 @@ class _MyListTileState extends State<MyListTile> {
                 )),
           );
         });
-  }
-
-  void showCommentDialog() {
-    showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-              title: const Text("Add comment"),
-              content: MyTextField(
-                obscureText: false,
-                hintText: "Write a comment...",
-                controller: _commentController,
-              ),
-              actions: [
-                TextButton(
-                    style: ButtonStyle(
-                        backgroundColor: WidgetStateProperty.all(
-                            Theme.of(context).colorScheme.primary),
-                        foregroundColor: WidgetStateProperty.all(
-                            Theme.of(context).colorScheme.secondary)),
-                    onPressed: () {
-                      Navigator.pop(context);
-                      _commentController.clear();
-                    },
-                    child: const Text("Cancel")),
-                TextButton(
-                    style: ButtonStyle(
-                        backgroundColor: WidgetStateProperty.all(
-                            Theme.of(context).colorScheme.primary),
-                        foregroundColor: WidgetStateProperty.all(
-                            Theme.of(context).colorScheme.secondary)),
-                    onPressed: () {
-                      addComment(_commentController.text);
-                      Navigator.pop(context);
-                      _commentController.clear();
-                    },
-                    child: const Text("Save")),
-              ],
-            ));
   }
 
   void toggleLike() {

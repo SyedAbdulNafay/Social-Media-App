@@ -13,7 +13,8 @@ class MyTextField extends StatelessWidget {
       required this.obscureText,
       this.controller,
       this.validator,
-      this.focusNode, this.onChanged});
+      this.focusNode,
+      this.onChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -27,14 +28,22 @@ class MyTextField extends StatelessWidget {
         controller: controller,
         obscureText: obscureText,
         decoration: InputDecoration(
+            focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                    color: Theme.of(context).colorScheme.inversePrimary)),
+            enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                    color: Theme.of(context).colorScheme.secondary)),
             disabledBorder: OutlineInputBorder(
-                borderSide:
-                    BorderSide(color: Theme.of(context).colorScheme.background)),
+                borderSide: BorderSide(
+                    color: Theme.of(context).colorScheme.background)),
             fillColor: Theme.of(context).colorScheme.primary,
             filled: true,
             hintText: hintText,
-            hintStyle: TextStyle(color: Theme.of(context).colorScheme.secondary),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12))),
+            hintStyle:
+                TextStyle(color: Theme.of(context).colorScheme.secondary),
+            border:
+                OutlineInputBorder(borderRadius: BorderRadius.circular(12))),
       ),
     );
   }
