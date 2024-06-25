@@ -13,7 +13,7 @@ class MyTextBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(right: 20, top: 20),
+      margin: const EdgeInsets.only(right: 20, top: 20, left: 20),
       padding: const EdgeInsets.only(bottom: 16, right: 16, left: 16, top: 8),
       decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.primary,

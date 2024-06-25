@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -142,7 +140,12 @@ class _MyListTileState extends State<MyListTile> {
                           ),
                         ),
                         MyPostButton(
-                            onTap: () => addComment(_commentController.text))
+                          onTap: () => addComment(_commentController.text),
+                          icon: Icon(
+                            Icons.send,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                        )
                       ],
                     )
                   ],
@@ -160,10 +163,8 @@ class _MyListTileState extends State<MyListTile> {
               actions: [
                 TextButton(
                     style: ButtonStyle(
-                        backgroundColor: WidgetStateProperty.all(
-                            Theme.of(context).colorScheme.primary),
-                        foregroundColor: WidgetStateProperty.all(
-                            Theme.of(context).colorScheme.secondary)),
+                        backgroundColor: WidgetStateProperty.all(Colors.red),
+                        foregroundColor: WidgetStateProperty.all(Colors.white)),
                     onPressed: () async {
                       final commentDocs = await FirebaseFirestore.instance
                           .collection("posts")
@@ -250,11 +251,45 @@ class _MyListTileState extends State<MyListTile> {
                     )
                 ],
               ),
-              Text(
-                widget.subtitle,
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.inversePrimary,
-                    fontSize: 20),
+              GestureDetector(
+                onTap: () {
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: Text(
+                            widget.title,
+                            style: TextStyle(
+                                fontSize: 15,
+                                color: Theme.of(context).colorScheme.secondary),
+                          ),
+                          content: SingleChildScrollView(
+                            child: SizedBox(
+                                height: 700, child: Text(widget.subtitle)),
+                          ),
+                          actions: [
+                            TextButton(
+                                style: ButtonStyle(
+                                    backgroundColor: WidgetStateProperty.all(
+                                        Theme.of(context).colorScheme.primary),
+                                    foregroundColor: WidgetStateProperty.all(
+                                        Theme.of(context)
+                                            .colorScheme
+                                            .secondary)),
+                                onPressed: () => Navigator.pop(context),
+                                child: const Text("Close"))
+                          ],
+                        );
+                      });
+                },
+                child: Text(
+                  widget.subtitle,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 3,
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.inversePrimary,
+                      fontSize: 20),
+                ),
               ),
               const SizedBox(
                 height: 5,

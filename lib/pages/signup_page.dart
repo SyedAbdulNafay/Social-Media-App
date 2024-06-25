@@ -27,8 +27,15 @@ class _SignUpPageState extends State<SignUpPage> {
 
         createUserDocument(userCredential);
       } on FirebaseAuthException catch (e) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(e.code)));
+        if (e.code == 'email-already-in-use') {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text("Email already in use"),
+          ));
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text("Error: $e"),
+          ));
+        }
       }
       isSigningIn = false;
     }
@@ -38,8 +45,9 @@ class _SignUpPageState extends State<SignUpPage> {
     if (userCredential != null && userCredential.user != null) {
       await FirebaseFirestore.instance
           .collection("Users")
-          .doc(userCredential.user!.email)
+          .doc(userCredential.user!.uid)
           .set({
+        'userId': userCredential.user!.uid,
         'email': userCredential.user!.email,
         'username': _usernamecontroller.text,
         'bio': 'Empty bio...'
@@ -98,7 +106,7 @@ class _SignUpPageState extends State<SignUpPage> {
       body: SafeArea(
         child: Center(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 25),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Form(
               key: _formKey,
               child: SingleChildScrollView(
@@ -124,35 +132,25 @@ class _SignUpPageState extends State<SignUpPage> {
                       height: 50,
                     ),
 
-                    //username textfield
                     MyTextField(
                         hintText: "Username",
                         obscureText: false,
                         controller: _usernamecontroller),
-                    const SizedBox(
-                      height: 10,
-                    ),
-
+                                        
                     //email text field
                     MyTextField(
                         validator: emailValidator,
                         hintText: "Email",
                         obscureText: false,
                         controller: _emailcontroller),
-                    const SizedBox(
-                      height: 10,
-                    ),
-
+                                        
                     //password text field
                     MyTextField(
                         validator: passwordValidator,
                         hintText: "Password",
                         obscureText: true,
                         controller: _passwordcontroller),
-                    const SizedBox(
-                      height: 10,
-                    ),
-
+                                        
                     //confirm password text field
                     MyTextField(
                         validator: confirmPWValidator,
@@ -160,14 +158,13 @@ class _SignUpPageState extends State<SignUpPage> {
                         obscureText: true,
                         controller: _confirmPWcontroller),
                     const SizedBox(
-                      height: 25,
+                      height: 20,
                     ),
-
                     //log in button
                     MyButton(
                       onTap: register,
                       child: isSigningIn
-                          ? CircularProgressIndicator()
+                          ? const CircularProgressIndicator()
                           : Text(
                               "Log In",
                               style: TextStyle(
@@ -193,7 +190,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         GestureDetector(
                             onTap: widget.onTap,
                             child: Text(
-                              "Log In",
+                              "Sign Up",
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: Theme.of(context)

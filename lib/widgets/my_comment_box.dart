@@ -15,8 +15,8 @@ class MyCommentBox extends StatelessWidget {
   Widget build(BuildContext context) {
     DateTime dateTime = timestamp.toDate();
     return Container(
-      margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
-      padding: EdgeInsets.all(16),
+      margin: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.primary,
           borderRadius: BorderRadius.circular(12)),
@@ -33,11 +33,14 @@ class MyCommentBox extends StatelessWidget {
                     color: Theme.of(context).colorScheme.secondary,
                     fontSize: 12),
               ),
-              Text(
-                text,
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.inversePrimary,
-                    fontSize: 16),
+              SizedBox(
+                width: 290,
+                child: Text(
+                  text,
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.inversePrimary,
+                      fontSize: 16),
+                ),
               ),
             ],
           ),

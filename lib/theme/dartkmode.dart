@@ -5,7 +5,7 @@ ThemeData darkTheme = ThemeData(
     colorScheme: ColorScheme.dark(
         background: Colors.black,
         primary: Colors.grey.shade900,
-        secondary: Colors.grey.shade500,
+        secondary: Colors.grey.shade600,
         inversePrimary: Colors.white),
     textTheme: ThemeData.light()
         .textTheme

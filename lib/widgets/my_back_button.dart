@@ -8,6 +8,7 @@ class MyBackButton extends StatelessWidget {
     return GestureDetector(
       onTap: () => Navigator.pop(context),
       child: Container(
+        margin: const EdgeInsets.only(top: 30, left: 30, bottom: 10),
         decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.primary,
             shape: BoxShape.circle),

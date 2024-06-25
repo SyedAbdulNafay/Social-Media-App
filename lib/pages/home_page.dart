@@ -30,6 +30,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
+  void dispose() {
+    _postController.dispose();
+    super.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
     _focusNode = FocusNode();
@@ -119,20 +125,23 @@ class _HomePageState extends State<HomePage> {
                             );
                           }));
                 }),
-            Padding(
-              padding: const EdgeInsets.all(25),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: MyTextField(
-                        focusNode: _focusNode,
-                        hintText: "Say something...",
-                        obscureText: false,
-                        controller: _postController),
+            Row(
+              children: [
+                Expanded(
+                  child: MyTextField(
+                      focusNode: _focusNode,
+                      hintText: "Say something...",
+                      obscureText: false,
+                      controller: _postController),
+                ),
+                MyPostButton(
+                  onTap: postMessage,
+                  icon: Icon(
+                    Icons.arrow_circle_up,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
-                  MyPostButton(onTap: postMessage)
-                ],
-              ),
+                )
+              ],
             ),
           ],
         ),

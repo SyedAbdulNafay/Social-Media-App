@@ -25,8 +25,14 @@ class _LoginPageState extends State<LoginPage> {
                 email: _emailcontroller.text,
                 password: _passwordcontroller.text);
       } on FirebaseAuthException catch (e) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(e.code)));
+        if (e.code == 'user-not-found' || e.code == 'wrong password') {
+          ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Invalid email or password")));
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text("Error: $e"),
+          ));
+        }
       }
       isLoggingIn = false;
     }
@@ -75,9 +81,6 @@ class _LoginPageState extends State<LoginPage> {
                         hintText: "Email",
                         obscureText: false,
                         controller: _emailcontroller),
-                    const SizedBox(
-                      height: 10,
-                    ),
 
                     //password text field
                     MyTextField(
