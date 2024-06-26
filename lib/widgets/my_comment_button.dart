@@ -12,7 +12,10 @@ class CommentButton extends StatelessWidget {
       onTap: onTap,
       child: Column(
         children: [
-           Icon(Icons.comment, color: Theme.of(context).colorScheme.secondary,),
+          const Icon(
+            Icons.comment,
+            color: Colors.black,
+          ),
           StreamBuilder(
               stream: FirebaseFirestore.instance
                   .collection("posts")
@@ -23,8 +26,8 @@ class CommentButton extends StatelessWidget {
                 if (snapshot.hasData) {
                   return Text(
                     snapshot.data!.docs.length.toString(),
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.secondary),
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.black),
                   );
                 } else {
                   return Text(

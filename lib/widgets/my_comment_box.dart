@@ -18,7 +18,7 @@ class MyCommentBox extends StatelessWidget {
       margin: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primary,
+          color: Theme.of(context).colorScheme.secondary,
           borderRadius: BorderRadius.circular(12)),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -29,24 +29,21 @@ class MyCommentBox extends StatelessWidget {
             children: [
               Text(
                 user,
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.secondary,
-                    fontSize: 12),
+                style: const TextStyle(fontSize: 12),
               ),
               SizedBox(
                 width: 290,
                 child: Text(
                   text,
-                  style: TextStyle(
-                      color: Theme.of(context).colorScheme.inversePrimary,
-                      fontSize: 16),
+                  style: const TextStyle(fontSize: 16),
                 ),
               ),
             ],
           ),
           Text(
             "${dateTime.day}/${dateTime.month}/${dateTime.year}",
-            style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 12),
+            style: TextStyle(
+                color: Theme.of(context).colorScheme.secondary, fontSize: 12),
           )
         ],
       ),

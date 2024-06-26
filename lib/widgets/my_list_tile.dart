@@ -141,9 +141,9 @@ class _MyListTileState extends State<MyListTile> {
                         ),
                         MyPostButton(
                           onTap: () => addComment(_commentController.text),
-                          icon: Icon(
+                          icon: const Icon(
                             Icons.send,
-                            color: Theme.of(context).colorScheme.primary,
+                            color: Colors.black,
                           ),
                         )
                       ],
@@ -232,7 +232,7 @@ class _MyListTileState extends State<MyListTile> {
         child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary,
+              color: Theme.of(context).colorScheme.secondary,
               borderRadius: BorderRadius.circular(12)),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -242,8 +242,6 @@ class _MyListTileState extends State<MyListTile> {
                 children: [
                   Text(
                     widget.title,
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.secondary),
                   ),
                   if (widget.title == currentUser!.email)
                     MyDeleteButton(
@@ -286,9 +284,7 @@ class _MyListTileState extends State<MyListTile> {
                   widget.subtitle,
                   overflow: TextOverflow.ellipsis,
                   maxLines: 3,
-                  style: TextStyle(
-                      color: Theme.of(context).colorScheme.inversePrimary,
-                      fontSize: 20),
+                  style: const TextStyle(fontSize: 20),
                 ),
               ),
               const SizedBox(
@@ -305,9 +301,9 @@ class _MyListTileState extends State<MyListTile> {
                           MyLikeButton(isLiked: isLiked, onTap: toggleLike),
                           Text(
                             widget.likes.length.toString(),
-                            style: TextStyle(
-                                color: Theme.of(context).colorScheme.secondary,
-                                fontWeight: FontWeight.bold),
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black),
                           ),
                         ],
                       ),
