@@ -89,11 +89,11 @@ class ChatServices {
         .collection("chat_rooms")
         .doc(chatroomID)
         .collection("messages")
-        .where("receiverId", isEqualTo: otherUserID);
+        .where("senderId", isEqualTo: otherUserID);
     await messagesRef.get().then((querySnapshot) {
-      querySnapshot.docs.forEach((document) {
+      for (var document in querySnapshot.docs) {
         document.reference.update({'status': 'seen'});
-      });
+      }
     });
   }
 }

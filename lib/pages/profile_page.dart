@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:social_media_app/database/posts_firestore.dart';
 import 'package:social_media_app/widgets/my_list_tile.dart';
 import 'package:social_media_app/widgets/my_text_box.dart';
@@ -20,6 +24,36 @@ class _ProfilePageState extends State<ProfilePage> {
   final FirestoreDatabase database = FirestoreDatabase();
 
   final usersCollection = FirebaseFirestore.instance.collection("Users");
+  XFile? image;
+  UploadTask? uploadTask;
+
+  selectImage() async {
+    final picture = await ImagePicker().pickImage(source: ImageSource.gallery);
+
+    if (picture != null) {
+      setState(() {
+        image = picture;
+      });
+    }
+  }
+
+  saveProfile() async {
+    final ref = FirebaseStorage.instance.ref().child("images/${image!.name}");
+
+    uploadTask = ref.putFile(File(image!.path));
+
+    setState(() {});
+
+    final snapshot = await uploadTask!.whenComplete(() => null);
+    setState(() {
+      uploadTask = null;
+    });
+    final downloadURL = await snapshot.ref.getDownloadURL();
+
+    await usersCollection
+        .doc(currentUser!.uid)
+        .update({'profilePicture': downloadURL});
+  }
 
   Future<void> editField(String field) async {
     String newString = "";
@@ -58,7 +92,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ],
             ));
 
-    if (newString.trim().length > 0) {
+    if (newString.trim().isNotEmpty) {
       await usersCollection.doc(currentUser!.email).update({field: newString});
     }
   }
@@ -67,7 +101,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.background,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         body: StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
           stream: FirebaseFirestore.instance
               .collection("Users")
@@ -101,16 +135,78 @@ class _ProfilePageState extends State<ProfilePage> {
                   const SizedBox(
                     height: 25,
                   ),
-                  Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(24),
-                        color: Theme.of(context).colorScheme.primary),
-                    padding: const EdgeInsets.all(25),
-                    child: const Icon(
-                      Icons.person,
-                      size: 64,
-                    ),
-                  ),
+                  Stack(alignment: Alignment.center, children: [
+                    uploadTask != null
+                        ? StreamBuilder(
+                            stream: uploadTask?.snapshotEvents,
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                debugPrint("snapshot has data");
+                                final data = snapshot.data!;
+                                double progress =
+                                    data.bytesTransferred / data.totalBytes;
+
+                                return SizedBox(
+                                  height: 137,
+                                  width: 137,
+                                  child: CircularProgressIndicator(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .inversePrimary,
+                                    value: progress,
+                                    strokeWidth: 8,
+                                  ),
+                                );
+                              } else {
+                                debugPrint("snapshot does not have data");
+                                return SizedBox(
+                                  height: 137,
+                                  width: 137,
+                                  child: CircularProgressIndicator(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .inversePrimary,
+                                    strokeWidth: 8,
+                                  ),
+                                );
+                              }
+                            })
+                        : Container(),
+                    Stack(alignment: Alignment.bottomRight, children: [
+                      user['profilePicture'] != 'not selected'
+                          ? CircleAvatar(
+                              radius: 64,
+                              backgroundImage:
+                                  NetworkImage(user['profilePicture']),
+                            )
+                          : Container(
+                              padding: const EdgeInsets.all(24),
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Theme.of(context).colorScheme.primary),
+                              child: Icon(
+                                Icons.person,
+                                color: Theme.of(context).colorScheme.secondary,
+                                size: 64,
+                              ),
+                            ),
+                      GestureDetector(
+                        onTap: () async {
+                          await selectImage();
+                          await saveProfile();
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Theme.of(context).colorScheme.surface),
+                          child: const Icon(
+                            Icons.edit,
+                          ),
+                        ),
+                      )
+                    ]),
+                  ]),
                   const SizedBox(
                     height: 25,
                   ),
@@ -122,8 +218,6 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   Text(
                     user['email'],
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.secondary),
                   ),
                   const Row(
                     children: [
@@ -159,8 +253,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
                           return CircularProgressIndicator(
-                            color:
-                                Theme.of(context).colorScheme.inversePrimary,
+                            color: Theme.of(context).colorScheme.inversePrimary,
                           );
                         }
                         if (snapshot.hasError) {
@@ -170,18 +263,14 @@ class _ProfilePageState extends State<ProfilePage> {
                         }
                         final posts = snapshot.data?.docs;
                         if (posts == null || posts.isEmpty) {
-                          return Center(
+                          return const Center(
                             child: Text(
                               "No posts...",
-                              style: TextStyle(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .secondary),
                             ),
                           );
                         }
                         return Container(
-                          margin: EdgeInsets.only(top: 10),
+                          margin: const EdgeInsets.only(top: 10),
                           height: 300,
                           child: ListView.builder(
                               itemCount: posts.length,
@@ -192,8 +281,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                     subtitle: post['message'],
                                     timestamp: post['timestamp'],
                                     postId: post.id,
-                                    likes: List<String>.from(
-                                        post['likes'] ?? []));
+                                    likes:
+                                        List<String>.from(post['likes'] ?? []));
                               }),
                         );
                       })
@@ -204,5 +293,27 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
       ),
     );
+  }
+
+  Widget buildProgress() {
+    return StreamBuilder(
+        stream: uploadTask?.snapshotEvents,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            final data = snapshot.data!;
+            double progress = data.bytesTransferred / data.totalBytes;
+
+            return SizedBox(
+              height: 137,
+              width: 137,
+              child: CircularProgressIndicator(
+                color: Colors.green[800],
+                value: progress,
+                strokeWidth: 8,
+              ),
+            );
+          }
+          return Container();
+        });
   }
 }

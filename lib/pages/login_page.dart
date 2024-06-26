@@ -1,5 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:social_media_app/theme/theme_manager.dart';
 import 'package:social_media_app/widgets/my_button.dart';
 import 'package:social_media_app/widgets/my_text_field.dart';
 
@@ -20,6 +23,18 @@ class _LoginPageState extends State<LoginPage> {
     if (_formKey.currentState!.validate()) {
       isLoggingIn = true;
       try {
+        final query = FirebaseFirestore.instance
+            .collection("Users")
+            .where("email", isEqualTo: _emailcontroller.text);
+        final querySnapshot = await query.get();
+
+        if (querySnapshot.docs.isEmpty) {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text("This email is not valid")));
+          isLoggingIn = false;
+          return;
+        }
+
         UserCredential? user = await FirebaseAuth.instance
             .signInWithEmailAndPassword(
                 email: _emailcontroller.text,
@@ -38,6 +53,18 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  //validators
+  Future<String?> emailValidator(String? value) async {
+    if (value == null || value.isEmpty) {
+      return "This field cannot be empty";
+    }
+    if (!RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$')
+        .hasMatch(value)) {
+      return "Enter valid email";
+    }
+    return null;
+  }
+
   //text controllers
   final TextEditingController _emailcontroller = TextEditingController();
 
@@ -45,8 +72,10 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final themeManager = Provider.of<ThemeManager>(context);
+
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: SafeArea(
         child: Center(
           child: Padding(
@@ -60,7 +89,9 @@ class _LoginPageState extends State<LoginPage> {
                     //logo
                     Icon(
                       Icons.person,
-                      color: Theme.of(context).colorScheme.inversePrimary,
+                      color: themeManager.isDarkMode
+                          ? Theme.of(context).colorScheme.inversePrimary
+                          : Colors.black,
                       size: 100,
                     ),
                     const SizedBox(
@@ -92,15 +123,9 @@ class _LoginPageState extends State<LoginPage> {
                     ),
 
                     //forgot password
-                    Row(
+                    const Row(
                       mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text(
-                          "Forgot password?",
-                          style: TextStyle(
-                              color: Theme.of(context).colorScheme.secondary),
-                        )
-                      ],
+                      children: [Text("Forgot password?")],
                     ),
                     const SizedBox(
                       height: 25,
@@ -111,14 +136,10 @@ class _LoginPageState extends State<LoginPage> {
                       onTap: login,
                       child: isLoggingIn
                           ? const CircularProgressIndicator()
-                          : Text(
+                          : const Text(
                               "Log In",
                               style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .inversePrimary),
+                                  fontSize: 16, fontWeight: FontWeight.bold),
                             ),
                     ),
                     const SizedBox(

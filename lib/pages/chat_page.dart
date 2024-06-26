@@ -7,6 +7,7 @@ import 'package:social_media_app/widgets/my_message_button.dart';
 import 'package:social_media_app/widgets/my_text_field.dart';
 
 class ChatPage extends StatefulWidget {
+  final String imageURL;
   final String userID;
   final String receiverUsername;
   final String receiverID;
@@ -14,7 +15,8 @@ class ChatPage extends StatefulWidget {
       {super.key,
       required this.receiverUsername,
       required this.receiverID,
-      required this.userID});
+      required this.userID,
+      required this.imageURL});
 
   @override
   State<ChatPage> createState() => _ChatPageState();
@@ -35,7 +37,6 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _markMessageAsSeen();
   }
@@ -51,15 +52,34 @@ class _ChatPageState extends State<ChatPage> {
     return Scaffold(
       appBar: AppBar(
         title: Align(
-            alignment: const Alignment(-0.25, 0),
-            child: Text(
-              widget.receiverUsername,
-              style: TextStyle(
-                  color: Theme.of(context).colorScheme.inversePrimary),
-            )),
-        backgroundColor: Colors.transparent,
+          alignment: const Alignment(-0.25, 0),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              widget.imageURL != "not selected"
+                  ? CircleAvatar(
+                      backgroundImage: NetworkImage(widget.imageURL),
+                    )
+                  : Container(
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Theme.of(context).colorScheme.inversePrimary),
+                      child: Icon(
+                        Icons.person,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+              const SizedBox(
+                width: 10,
+              ),
+              Text(widget.receiverUsername),
+            ],
+          ),
+        ),
+        backgroundColor: Theme.of(context).colorScheme.secondary,
       ),
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: Stack(
         children: [
           _buildMessageList(context),

@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:social_media_app/theme/theme_manager.dart';
 import 'package:social_media_app/widgets/my_button.dart';
 import 'package:social_media_app/widgets/my_text_field.dart';
 
@@ -20,6 +22,16 @@ class _SignUpPageState extends State<SignUpPage> {
     if (_formKey.currentState!.validate()) {
       isSigningIn = true;
       try {
+        final usernameQuery = await FirebaseFirestore.instance
+            .collection("Users")
+            .where("username", isEqualTo: _usernamecontroller.text)
+            .get();
+        if (usernameQuery.docs.isNotEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Username is already in use")));
+          isSigningIn = false;
+          return;
+        }
         UserCredential? userCredential = await FirebaseAuth.instance
             .createUserWithEmailAndPassword(
                 email: _emailcontroller.text,
@@ -50,7 +62,8 @@ class _SignUpPageState extends State<SignUpPage> {
         'userId': userCredential.user!.uid,
         'email': userCredential.user!.email,
         'username': _usernamecontroller.text,
-        'bio': 'Empty bio...'
+        'bio': 'Empty bio...',
+        'profilePicture': 'not selected'
       });
     }
   }
@@ -101,8 +114,10 @@ class _SignUpPageState extends State<SignUpPage> {
 
   @override
   Widget build(BuildContext context) {
+    final themeManager = Provider.of<ThemeManager>(context);
+
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: SafeArea(
         child: Center(
           child: Padding(
@@ -116,7 +131,9 @@ class _SignUpPageState extends State<SignUpPage> {
                     //logo
                     Icon(
                       Icons.person,
-                      color: Theme.of(context).colorScheme.inversePrimary,
+                      color: themeManager.isDarkMode
+                          ? Theme.of(context).colorScheme.inversePrimary
+                          : Colors.black,
                       size: 100,
                     ),
                     const SizedBox(
@@ -136,21 +153,21 @@ class _SignUpPageState extends State<SignUpPage> {
                         hintText: "Username",
                         obscureText: false,
                         controller: _usernamecontroller),
-                                        
+
                     //email text field
                     MyTextField(
                         validator: emailValidator,
                         hintText: "Email",
                         obscureText: false,
                         controller: _emailcontroller),
-                                        
+
                     //password text field
                     MyTextField(
                         validator: passwordValidator,
                         hintText: "Password",
                         obscureText: true,
                         controller: _passwordcontroller),
-                                        
+
                     //confirm password text field
                     MyTextField(
                         validator: confirmPWValidator,
@@ -165,14 +182,12 @@ class _SignUpPageState extends State<SignUpPage> {
                       onTap: register,
                       child: isSigningIn
                           ? const CircularProgressIndicator()
-                          : Text(
-                              "Log In",
+                          : const Text(
+                              "Sign Up",
                               style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .inversePrimary),
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                     ),
                     const SizedBox(
@@ -190,7 +205,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         GestureDetector(
                             onTap: widget.onTap,
                             child: Text(
-                              "Sign Up",
+                              "Log In",
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: Theme.of(context)

@@ -15,10 +15,10 @@ class UsersPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.background,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         body: Column(
           children: [
-            Row(
+            const Row(
               children: [
                 MyBackButton(),
               ],
@@ -61,11 +61,13 @@ class UsersPage extends StatelessWidget {
       Map<String, dynamic> userData, BuildContext context) {
     if (userData['email'] != FirebaseAuth.instance.currentUser!.email) {
       return MyUserTile(
+        imageURL: userData['profilePicture'],
         text: userData['username'],
         onTap: () => Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => ChatPage(
+                      imageURL: userData['profilePicture'],
                       userID: FirebaseAuth.instance.currentUser!.uid,
                       receiverUsername: userData['username'],
                       receiverID: userData['userId'],

@@ -26,11 +26,11 @@ class ChatBubble extends StatelessWidget {
     switch (status) {
       case 'sending':
         statusIcon = Icons.access_time;
-        statusIconColor = Colors.grey[400];
+        statusIconColor = Colors.grey;
         break;
       case 'delivered':
         statusIcon = Icons.check;
-        statusIconColor = Colors.grey[400];
+        statusIconColor = Colors.grey;
         break;
       case 'seen':
         statusIcon = Icons.check;
@@ -46,26 +46,28 @@ class ChatBubble extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
           color: isCurrentUser
-              ? Colors.green[800]
-              : (themeManager.isDarkMode
-                  ? Colors.grey[900]
-                  : Theme.of(context).colorScheme.secondary),
+              ? Theme.of(context).colorScheme.inversePrimary
+              : Theme.of(context).colorScheme.primary,
           borderRadius: BorderRadius.circular(12)),
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             message,
-            style: const TextStyle(color: Colors.white),
+            style: TextStyle(
+                color: isCurrentUser
+                    ? Colors.black
+                    : (themeManager.isDarkMode ? Colors.white : Colors.black)),
           ),
           Row(
             mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: isCurrentUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+            mainAxisAlignment:
+                isCurrentUser ? MainAxisAlignment.end : MainAxisAlignment.start,
             children: [
               Text(
                 "${dateTime.hour}:${dateTime.minute}",
-                style: TextStyle(fontSize: 12, color: Colors.grey[300]),
+                style: const TextStyle(fontSize: 12, color: Colors.grey),
               ),
               const SizedBox(width: 4),
               isCurrentUser

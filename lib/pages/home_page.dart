@@ -49,6 +49,7 @@ class _HomePageState extends State<HomePage> {
         _focusNode.unfocus();
       },
       child: Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.surface,
         appBar: AppBar(
           actions: [
             IconButton(
@@ -70,7 +71,6 @@ class _HomePageState extends State<HomePage> {
             );
           }),
           backgroundColor: Colors.transparent,
-          foregroundColor: Theme.of(context).colorScheme.inversePrimary,
           title: const Center(
               child: Text(
             "C O N N E C T",
@@ -93,14 +93,12 @@ class _HomePageState extends State<HomePage> {
                   final posts = snapshot.data!.docs;
 
                   if (snapshot.data == null || posts.isEmpty) {
-                    return Center(
+                    return const Center(
                       child: Padding(
-                        padding: const EdgeInsets.all(25),
+                        padding: EdgeInsets.all(25),
                         child: Text(
                           "No posts...get started!",
-                          style: TextStyle(
-                              color: Theme.of(context).colorScheme.secondary,
-                              fontSize: 16),
+                          style: TextStyle(fontSize: 16),
                         ),
                       ),
                     );
@@ -136,9 +134,9 @@ class _HomePageState extends State<HomePage> {
                 ),
                 MyPostButton(
                   onTap: postMessage,
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.arrow_circle_up,
-                    color: Theme.of(context).colorScheme.primary,
+                    color: Colors.black,
                   ),
                 )
               ],
