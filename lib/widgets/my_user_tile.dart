@@ -4,8 +4,13 @@ class MyUserTile extends StatelessWidget {
   final String text;
   final String imageURL;
   final void Function()? onTap;
+  final int hasNewMessage;
   const MyUserTile(
-      {super.key, required this.text, this.onTap, required this.imageURL});
+      {super.key,
+      required this.text,
+      this.onTap,
+      required this.imageURL,
+      required this.hasNewMessage});
 
   @override
   Widget build(BuildContext context) {
@@ -18,21 +23,35 @@ class MyUserTile extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
               color: Theme.of(context).colorScheme.primary),
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              imageURL != "not selected"
-                  ? CircleAvatar(
-                      radius: 20,
-                      backgroundImage: NetworkImage(imageURL),
-                    )
-                  : const Icon(Icons.person),
-              const SizedBox(
-                width: 20,
+              Row(
+                children: [
+                  imageURL != "not selected"
+                      ? CircleAvatar(
+                          radius: 20,
+                          backgroundImage: NetworkImage(imageURL),
+                        )
+                      : const Icon(Icons.person),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  Text(
+                    text,
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold),
+                  )
+                ],
               ),
-              Text(
-                text,
-                style:
-                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              )
+              hasNewMessage > 0
+                  ? Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.inversePrimary,
+                          shape: BoxShape.circle),
+                      child: Text(hasNewMessage.toString()),
+                    )
+                  : Container()
             ],
           ),
         ));

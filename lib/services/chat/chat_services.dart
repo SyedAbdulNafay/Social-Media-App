@@ -7,17 +7,46 @@ class ChatServices {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  // get stream of users
-  Stream<List<Map<String, dynamic>>> getUsersStream() {
-    return _firestore.collection("Users").snapshots().map((snapshot) {
-      return snapshot.docs.map((doc) {
-        // get individual user
-        final user = doc.data();
+  // get stream of users sorted by last message timestamp
+  Stream<List<dynamic>> getUsersStream() {
+    return _firestore.collection("Users").get().then((usersSnapshot) {
+      final users = usersSnapshot.docs.map((doc) => doc.data()).toList();
 
-        // return that user
-        return user;
-      }).toList();
-    });
+      // get the last message timestamp for each user
+      final futures = users.map((user) async {
+        final chatroomId =
+            getChatroomID(_auth.currentUser!.uid, user['userId']);
+        final messagesSnapshot = await _firestore
+            .collection("chat_rooms")
+            .doc(chatroomId)
+            .collection("messages")
+            .orderBy("timestamp", descending: true)
+            .limit(1)
+            .get();
+
+        final lastMessageTimestamp = messagesSnapshot.docs.isNotEmpty
+            ? messagesSnapshot.docs.first.get("timestamp")
+            : null;
+
+        return {
+          'user': user,
+          'lastMessageTimestamp': lastMessageTimestamp,
+        };
+      });
+
+      return Future.wait(futures).then((usersWithTimestamps) {
+        // sort users by last message timestamp
+        usersWithTimestamps.sort((a, b) {
+          final timestampA = a['lastMessageTimestamp'] ?? Timestamp(0, 0);
+          final timestampB = b['lastMessageTimestamp'] ?? Timestamp(0, 0);
+          return timestampB.compareTo(timestampA);
+        });
+
+        return (usersWithTimestamps
+            .map((userWithTimestamp) => userWithTimestamp['user'])
+            .toList());
+      });
+    }).asStream();
   }
 
   //send message
@@ -63,7 +92,7 @@ class ChatServices {
     });
   }
 
-  String getChatroomID(String userID, String otherUserID){
+  String getChatroomID(String userID, String otherUserID) {
     List<String> ids = [userID, otherUserID];
     ids.sort();
     String chatroomID = ids.join('_');
@@ -95,5 +124,20 @@ class ChatServices {
         document.reference.update({'status': 'seen'});
       }
     });
+  }
+
+  Future<int> newMessages(String currentUserID, String otherUserID) async {
+    String chatroomID = getChatroomID(currentUserID, otherUserID);
+    final messages = await _firestore
+        .collection("chat_rooms")
+        .doc(chatroomID)
+        .collection("messages")
+        .get();
+    int hasNewMessge = messages.docs.where((message) {
+      return message.get('senderId') == otherUserID &&
+          message.get('status') == 'delivered';
+    }).length;
+
+    return hasNewMessge;
   }
 }

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:social_media_app/services/auth/auth.dart';
 import 'package:social_media_app/services/auth/login_or_signup.dart';
 import 'package:social_media_app/firebase_options.dart';
-import 'package:social_media_app/pages/home_page.dart';
+import 'package:social_media_app/pages/feed_page.dart';
 import 'package:social_media_app/pages/profile_page.dart';
 import 'package:social_media_app/pages/users_page.dart';
 import 'package:social_media_app/theme/dartkmode.dart';
@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
           theme: themeManager.isDarkMode ? darkTheme : lightTheme,
           routes: {
             '/login_or_signup_page': (context) => const LoginOrSignup(),
-            '/home_page': (context) => const HomePage(),
+            '/home_page': (context) => const FeedPage(),
             '/profile_page': (context) => const ProfilePage(),
             '/users_page': (context) => UsersPage(),
           },

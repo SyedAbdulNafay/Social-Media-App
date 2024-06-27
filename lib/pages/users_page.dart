@@ -2,30 +2,39 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:social_media_app/pages/chat_page.dart';
 import 'package:social_media_app/services/chat/chat_services.dart';
-import 'package:social_media_app/widgets/my_back_button.dart';
 
 import '../widgets/my_user_tile.dart';
 
-class UsersPage extends StatelessWidget {
-  UsersPage({super.key});
+class UsersPage extends StatefulWidget {
+  const UsersPage({super.key});
 
+  @override
+  State<UsersPage> createState() => _UsersPageState();
+}
+
+class _UsersPageState extends State<UsersPage> {
   final ChatServices chatService = ChatServices();
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        body: Column(
-          children: [
-            const Row(
-              children: [
-                MyBackButton(),
-              ],
-            ),
-            Expanded(child: _buildUserList()),
-          ],
+        appBar: AppBar(
+          title: StreamBuilder(
+            stream: _auth.userChanges(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return Text(snapshot.data!.displayName ?? "");
+              } else {
+                return const Text("");
+              }
+            },
+          ),
         ),
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        body: Expanded(child: _buildUserList()),
       ),
     );
   }
@@ -48,31 +57,52 @@ class UsersPage extends StatelessWidget {
             );
           }
 
-          return ListView(
-            children: snapshot.data!
-                .map<Widget>(
-                    (userData) => _buildUserListItem(userData, context))
-                .toList(),
-          );
+          if (snapshot.data != null) {
+            return ListView(
+              children: snapshot.data!
+                  .map<Widget>(
+                      (userData) => _buildUserListItem(userData, context))
+                  .toList(),
+            );
+          } else {
+            return const Center(
+              child: Text("No users found"),
+            );
+          }
         });
   }
 
   Widget _buildUserListItem(
       Map<String, dynamic> userData, BuildContext context) {
     if (userData['email'] != FirebaseAuth.instance.currentUser!.email) {
-      return MyUserTile(
-        imageURL: userData['profilePicture'],
-        text: userData['username'],
-        onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => ChatPage(
-                      imageURL: userData['profilePicture'],
-                      userID: FirebaseAuth.instance.currentUser!.uid,
-                      receiverUsername: userData['username'],
-                      receiverID: userData['userId'],
-                    ))),
-      );
+      return FutureBuilder(
+          future: chatService.newMessages(
+              _auth.currentUser!.uid, userData['userId']),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return MyUserTile(
+                  hasNewMessage: snapshot.data!,
+                  imageURL: userData['profilePicture'],
+                  text: userData['username'],
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ChatPage(
+                                  imageURL: userData['profilePicture'],
+                                  userID:
+                                      FirebaseAuth.instance.currentUser!.uid,
+                                  receiverUsername: userData['username'],
+                                  receiverID: userData['userId'],
+                                )));
+                    setState(() {});
+                  });
+            } else {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          });
     } else {
       return Container();
     }

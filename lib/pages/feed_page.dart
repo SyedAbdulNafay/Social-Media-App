@@ -9,14 +9,14 @@ import 'package:social_media_app/widgets/my_text_field.dart';
 
 import '../widgets/my_drawer.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class FeedPage extends StatefulWidget {
+  const FeedPage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<FeedPage> createState() => _FeedPageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _FeedPageState extends State<FeedPage> {
   late FocusNode _focusNode;
   final TextEditingController _postController = TextEditingController();
 

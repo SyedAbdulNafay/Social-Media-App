@@ -30,7 +30,7 @@ class _LoginPageState extends State<LoginPage> {
 
         if (querySnapshot.docs.isEmpty) {
           ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text("This email is not valid")));
+              .showSnackBar(SnackBar(content: const Text("This email is not valid")));
           isLoggingIn = false;
           return;
         }
