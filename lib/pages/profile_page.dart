@@ -66,6 +66,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     TextStyle(color: Theme.of(context).colorScheme.secondary),
               ),
               content: MyTextField(
+                isReplying: false,
                 hintText: "Enter new $field",
                 obscureText: false,
                 onChanged: (value) {

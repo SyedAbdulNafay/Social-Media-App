@@ -150,12 +150,14 @@ class _SignUpPageState extends State<SignUpPage> {
                     ),
 
                     MyTextField(
+                      isReplying: false,
                         hintText: "Username",
                         obscureText: false,
                         controller: _usernamecontroller),
 
                     //email text field
                     MyTextField(
+                      isReplying: false,
                         validator: emailValidator,
                         hintText: "Email",
                         obscureText: false,
@@ -163,6 +165,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
                     //password text field
                     MyTextField(
+                      isReplying: false,
                         validator: passwordValidator,
                         hintText: "Password",
                         obscureText: true,
@@ -170,6 +173,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
                     //confirm password text field
                     MyTextField(
+                      isReplying: false,
                         validator: confirmPWValidator,
                         hintText: "Confirm Password",
                         obscureText: true,

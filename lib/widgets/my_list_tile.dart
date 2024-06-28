@@ -134,6 +134,7 @@ class _MyListTileState extends State<MyListTile> {
                       children: [
                         Expanded(
                           child: MyTextField(
+                            isReplying: false,
                             obscureText: false,
                             hintText: "Enter comment here...",
                             controller: _commentController,

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:social_media_app/database/posts_firestore.dart';
+import 'package:social_media_app/pages/post_screen.dart';
 import 'package:social_media_app/theme/theme_manager.dart';
 import 'package:social_media_app/widgets/my_list_tile.dart';
 import 'package:social_media_app/widgets/my_post_button.dart';
@@ -49,6 +50,14 @@ class _FeedPageState extends State<FeedPage> {
         _focusNode.unfocus();
       },
       child: Scaffold(
+        floatingActionButton: FloatingActionButton(
+          shape: const CircleBorder(),
+          foregroundColor: Colors.black,
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          onPressed: () => Navigator.push(context,
+              MaterialPageRoute(builder: (context) => const PostScreen())),
+          child: const Icon(Icons.post_add),
+        ),
         backgroundColor: Theme.of(context).colorScheme.surface,
         appBar: AppBar(
           actions: [
@@ -127,6 +136,7 @@ class _FeedPageState extends State<FeedPage> {
               children: [
                 Expanded(
                   child: MyTextField(
+                      isReplying: false,
                       focusNode: _focusNode,
                       hintText: "Say something...",
                       obscureText: false,

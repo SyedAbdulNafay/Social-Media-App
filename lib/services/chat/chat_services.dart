@@ -7,6 +7,12 @@ class ChatServices {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  Stream<QuerySnapshot>? _usersStream;
+
+  Stream<QuerySnapshot> get usersStream {
+    return _usersStream ??= _firestore.collection("Users").snapshots();
+  }
+
   // get stream of users sorted by last message timestamp
   Stream<List<dynamic>> getUsersStream() {
     return _firestore.collection("Users").get().then((usersSnapshot) {
@@ -50,12 +56,14 @@ class ChatServices {
   }
 
   //send message
-  Future<void> sendMessage(String receiverId, String messageText) async {
+  Future<void> sendMessage(
+      String receiverId, String messageText, Message? replyMessage) async {
     final String currentUserId = _auth.currentUser!.uid;
     final String currentUserEmail = _auth.currentUser!.email!;
     final Timestamp timestamp = Timestamp.now();
 
     Message message = Message(
+        replyMessage: replyMessage,
         senderId: currentUserId,
         senderEmail: currentUserEmail,
         receiverId: receiverId,

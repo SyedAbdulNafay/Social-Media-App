@@ -1,10 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:social_media_app/models/message.dart';
 import 'package:social_media_app/services/chat/chat_services.dart';
 import 'package:social_media_app/widgets/chat_bubble.dart';
 import 'package:social_media_app/widgets/my_message_button.dart';
 import 'package:social_media_app/widgets/my_text_field.dart';
+import 'package:social_media_app/widgets/reply_message.dart';
+import 'package:swipe_to/swipe_to.dart';
 
 class ChatPage extends StatefulWidget {
   final String imageURL;
@@ -23,6 +26,8 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
+  final focusNode = FocusNode();
+  Message? replyMessage;
   final TextEditingController _messageController = TextEditingController();
 
   final ChatServices chatService = ChatServices();
@@ -31,7 +36,11 @@ class _ChatPageState extends State<ChatPage> {
     if (_messageController.text.isNotEmpty) {
       String messageText = _messageController.text;
       _messageController.clear();
-      await chatService.sendMessage(widget.receiverID, messageText);
+      await chatService.sendMessage(
+          widget.receiverID, messageText, replyMessage);
+      setState(() {
+        replyMessage = null;
+      });
     }
   }
 
@@ -49,6 +58,7 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
+    bool isReplying = replyMessage != null;
     return Scaffold(
       appBar: AppBar(
         title: Align(
@@ -80,11 +90,12 @@ class _ChatPageState extends State<ChatPage> {
         backgroundColor: Theme.of(context).colorScheme.secondary,
       ),
       backgroundColor: Theme.of(context).colorScheme.surface,
-      body: Stack(
+      body: Column(
         children: [
-          _buildMessageList(context),
+          Expanded(child: _buildMessageList(context)),
           Align(
-              alignment: const Alignment(0, 1), child: _buildUserInput(context))
+              alignment: const Alignment(0, 1),
+              child: _buildUserInput(context, isReplying))
         ],
       ),
     );
@@ -113,10 +124,13 @@ class _ChatPageState extends State<ChatPage> {
             return Container();
           }
 
-          return ListView(
-            children: snapshot.data!.docs
-                .map((doc) => _buildMessageItem(doc))
-                .toList(),
+          return GestureDetector(
+            onTap: () => focusNode.unfocus(),
+            child: ListView(
+              children: snapshot.data!.docs
+                  .map((doc) => _buildMessageItem(doc))
+                  .toList(),
+            ),
           );
         });
   }
@@ -130,27 +144,72 @@ class _ChatPageState extends State<ChatPage> {
     var alignment =
         isCurrentUser ? Alignment.centerRight : Alignment.centerLeft;
 
-    return Container(
-        alignment: alignment,
-        child: ChatBubble(
-          timestamp: data['timestamp'],
-          isCurrentUser: isCurrentUser,
-          message: data['message'],
-          status: data['status'],
-        ));
+    return SwipeTo(
+      onRightSwipe: (details) {
+        replyToMessage(Message(
+            replyMessage: data['replyMessage'],
+            senderId: data['senderId'],
+            senderEmail: data['senderEmail'],
+            receiverId: data['receiverId'],
+            message: data['message'],
+            timestamp: data['timestamp']));
+        focusNode.requestFocus();
+      },
+      child: Container(
+          alignment: alignment,
+          child: ChatBubble(
+            replyMessage: data['replyMessage'],
+            timestamp: data['timestamp'],
+            isCurrentUser: isCurrentUser,
+            message: data['message'],
+            status: data['status'],
+          )),
+    );
   }
 
-  Widget _buildUserInput(BuildContext context) {
-    return Row(children: [
+  Widget _buildUserInput(BuildContext context, bool isReplying) {
+    return Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
       Expanded(
-          child: MyTextField(
-        obscureText: false,
-        controller: _messageController,
-        hintText: "Type a message",
+          child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          if (isReplying) _buildReply(),
+          MyTextField(
+            isReplying: isReplying,
+            focusNode: focusNode,
+            obscureText: false,
+            controller: _messageController,
+            hintText: "Type a message",
+          ),
+        ],
       )),
       MyMessageButton(
         onTap: sendMessage,
       ),
     ]);
+  }
+
+  Widget _buildReply() => Container(
+      margin: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+          color: Theme.of(context).primaryColor,
+          borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(15), topRight: Radius.circular(15))),
+      child: MyReplyMessage(
+        message: replyMessage!,
+        onCancelReply: cancelReply,
+      ));
+
+  void replyToMessage(Message message) {
+    setState(() {
+      replyMessage = message;
+    });
+  }
+
+  void cancelReply() {
+    setState(() {
+      replyMessage = null;
+    });
   }
 }

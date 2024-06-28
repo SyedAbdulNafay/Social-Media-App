@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:social_media_app/theme/theme_manager.dart';
 
 class ChatBubble extends StatelessWidget {
+  final Map<String, dynamic>? replyMessage;
   final String message;
   final bool isCurrentUser;
   final Timestamp timestamp;
@@ -13,7 +14,8 @@ class ChatBubble extends StatelessWidget {
       required this.message,
       required this.isCurrentUser,
       required this.timestamp,
-      required this.status});
+      required this.status,
+      this.replyMessage});
 
   @override
   Widget build(BuildContext context) {

@@ -7,6 +7,7 @@ class Message {
   final String message;
   final Timestamp timestamp;
   final String status;
+  final Message? replyMessage;
 
   Message(
       {required this.senderId,
@@ -14,16 +15,18 @@ class Message {
       required this.receiverId,
       required this.message,
       required this.timestamp,
-      this.status = 'sending'});
+      this.status = 'sending',
+      this.replyMessage});
 
-  Map<String, dynamic> toMap(){
+  Map<String, dynamic> toMap() {
     return {
       'senderId': senderId,
       'senderEmail': senderEmail,
       'receiverId': receiverId,
       'message': message,
       'timestamp': timestamp,
-      'status': status
+      'status': status,
+      if (replyMessage != null) 'replyMessage': replyMessage!.toMap(),
     };
   }
 }

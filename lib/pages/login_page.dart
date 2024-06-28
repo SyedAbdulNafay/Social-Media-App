@@ -109,12 +109,14 @@ class _LoginPageState extends State<LoginPage> {
 
                     //email text field
                     MyTextField(
+                      isReplying: false,
                         hintText: "Email",
                         obscureText: false,
                         controller: _emailcontroller),
 
                     //password text field
                     MyTextField(
+                      isReplying: false,
                         hintText: "Password",
                         obscureText: true,
                         controller: _passwordcontroller),
