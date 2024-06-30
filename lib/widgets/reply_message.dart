@@ -13,34 +13,41 @@ class MyReplyMessage extends StatelessWidget {
       child: Row(
         children: [
           Container(
+            decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.inversePrimary,
+                borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(5),
+                    bottomLeft: Radius.circular(5))),
             width: 4,
-            color: Theme.of(context).colorScheme.inversePrimary,
           ),
           const SizedBox(
             width: 8,
           ),
           Expanded(
-              child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    message.senderEmail,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  GestureDetector(
-                    onTap: onCancelReply,
-                    child: const Icon(
-                      Icons.close,
-                      size: 16,
+              child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      message.senderEmail,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
-                  )
-                ],
-              ),
-              Text(message.message)
-            ],
+                    GestureDetector(
+                      onTap: onCancelReply,
+                      child: const Icon(
+                        Icons.close,
+                        size: 16,
+                      ),
+                    )
+                  ],
+                ),
+                Text(message.message)
+              ],
+            ),
           ))
         ],
       ),

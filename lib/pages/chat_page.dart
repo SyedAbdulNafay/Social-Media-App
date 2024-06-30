@@ -38,9 +38,7 @@ class _ChatPageState extends State<ChatPage> {
       _messageController.clear();
       await chatService.sendMessage(
           widget.receiverID, messageText, replyMessage);
-      setState(() {
-        replyMessage = null;
-      });
+      cancelReply();
     }
   }
 
@@ -93,9 +91,7 @@ class _ChatPageState extends State<ChatPage> {
       body: Column(
         children: [
           Expanded(child: _buildMessageList(context)),
-          Align(
-              alignment: const Alignment(0, 1),
-              child: _buildUserInput(context, isReplying))
+          _buildUserInput(context, isReplying)
         ],
       ),
     );
@@ -190,16 +186,21 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   Widget _buildReply() => Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20),
-      padding: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-          color: Theme.of(context).primaryColor,
-          borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(15), topRight: Radius.circular(15))),
-      child: MyReplyMessage(
-        message: replyMessage!,
-        onCancelReply: cancelReply,
-      ));
+        margin: const EdgeInsets.symmetric(horizontal: 20),
+        decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.primary,
+            borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(15), topRight: Radius.circular(15))),
+        child: Container(
+            margin: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.secondary,
+                borderRadius: BorderRadiusDirectional.circular(5)),
+            child: MyReplyMessage(
+              message: replyMessage!,
+              onCancelReply: cancelReply,
+            )),
+      );
 
   void replyToMessage(Message message) {
     setState(() {
