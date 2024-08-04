@@ -63,7 +63,7 @@ class ChatServices {
     final Timestamp timestamp = Timestamp.now();
 
     Message message = Message(
-        replyMessage: replyMessage,
+        replyMessage: replyMessage?.toMap(),
         senderId: currentUserId,
         senderEmail: currentUserEmail,
         receiverId: receiverId,

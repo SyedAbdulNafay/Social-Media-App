@@ -20,11 +20,11 @@ class FirestoreDatabase {
   }
 
   //read posts
-  Stream<QuerySnapshot> getPostsStream() {
+  Future<QuerySnapshot> getPostsFuture() {
     final postsStream = FirebaseFirestore.instance
         .collection("posts")
         .orderBy('timestamp', descending: true)
-        .snapshots();
+        .get();
     return postsStream;
   }
 

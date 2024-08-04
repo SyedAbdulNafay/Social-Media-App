@@ -29,6 +29,8 @@ class _ChatPageState extends State<ChatPage> {
   final focusNode = FocusNode();
   Message? replyMessage;
   final TextEditingController _messageController = TextEditingController();
+  bool _showOptions = false;
+  Message? _optionsMessage;
 
   final ChatServices chatService = ChatServices();
 
@@ -121,7 +123,12 @@ class _ChatPageState extends State<ChatPage> {
           }
 
           return GestureDetector(
-            onTap: () => focusNode.unfocus(),
+            onTap: () {
+              focusNode.unfocus();
+              setState(() {
+                _showOptions = false;
+              });
+            },
             child: ListView(
               children: snapshot.data!.docs
                   .map((doc) => _buildMessageItem(doc))
@@ -140,45 +147,110 @@ class _ChatPageState extends State<ChatPage> {
     var alignment =
         isCurrentUser ? Alignment.centerRight : Alignment.centerLeft;
 
-    return SwipeTo(
-      onRightSwipe: (details) {
-        replyToMessage(Message(
-            replyMessage: data['replyMessage'],
-            senderId: data['senderId'],
-            senderEmail: data['senderEmail'],
-            receiverId: data['receiverId'],
-            message: data['message'],
-            timestamp: data['timestamp']));
-        focusNode.requestFocus();
-      },
-      child: Container(
-          alignment: alignment,
-          child: ChatBubble(
-            replyMessage: data['replyMessage'],
-            timestamp: data['timestamp'],
-            isCurrentUser: isCurrentUser,
-            message: data['message'],
-            status: data['status'],
-          )),
+    Message message = Message(
+        id: doc.id,
+        replyMessage: data['replyMessage'],
+        senderId: data['senderId'],
+        senderEmail: data['senderEmail'],
+        receiverId: data['receiverId'],
+        message: data['message'],
+        timestamp: data['timestamp'],
+        status: data['status']);
+
+    return Stack(
+      children: [
+        SwipeTo(
+          onRightSwipe: (details) {
+            replyToMessage(message);
+            focusNode.requestFocus();
+          },
+          child: GestureDetector(
+            onLongPress: () {
+              setState(() {
+                _showOptions = true;
+                _optionsMessage = message;
+              });
+            },
+            child: Container(
+                alignment: alignment,
+                child: ChatBubble(
+                  showOptions: _showOptions && _optionsMessage == message,
+                  replyMessage: data['replyMessage'],
+                  timestamp: data['timestamp'],
+                  isCurrentUser: isCurrentUser,
+                  message: data['message'],
+                  status: data['status'],
+                )),
+          ),
+        ),
+        if (_showOptions && _optionsMessage?.id == message.id)
+          Align(
+            alignment: const Alignment(-0.5, 1),
+            child: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                    color: Colors.grey,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 4,
+                          spreadRadius: 2)
+                    ]),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                        decoration: const BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        height: 30,
+                        width: 100,
+                        padding: const EdgeInsets.all(5),
+                        child: const Row(
+                          children: [
+                            Icon(Icons.delete),
+                            Text("Delete"),
+                          ],
+                        )),
+                    Container(
+                        height: 30,
+                        width: 100,
+                        padding: const EdgeInsets.all(5),
+                        child: const Row(
+                          children: [
+                            Icon(Icons.report),
+                            Text("Report"),
+                          ],
+                        )),
+                  ],
+                )),
+          )
+      ],
     );
   }
 
   Widget _buildUserInput(BuildContext context, bool isReplying) {
     return Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
       Expanded(
-          child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          if (isReplying) _buildReply(),
-          MyTextField(
-            isReplying: isReplying,
-            focusNode: focusNode,
-            obscureText: false,
-            controller: _messageController,
-            hintText: "Type a message",
-          ),
-        ],
-      )),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            if (isReplying) _buildReply(),
+            MyTextField(
+              isReplying: isReplying,
+              focusNode: focusNode,
+              obscureText: false,
+              controller: _messageController,
+              hintText: "Type a message",
+            ),
+          ],
+        ),
+      ),
       MyMessageButton(
         onTap: sendMessage,
       ),

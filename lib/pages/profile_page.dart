@@ -10,8 +10,6 @@ import 'package:social_media_app/widgets/my_list_tile.dart';
 import 'package:social_media_app/widgets/my_text_box.dart';
 import 'package:social_media_app/widgets/my_text_field.dart';
 
-import '../widgets/my_back_button.dart';
-
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
@@ -128,11 +126,6 @@ class _ProfilePageState extends State<ProfilePage> {
             return SingleChildScrollView(
               child: Column(
                 children: [
-                  const Row(
-                    children: [
-                      MyBackButton(),
-                    ],
-                  ),
                   const SizedBox(
                     height: 25,
                   ),

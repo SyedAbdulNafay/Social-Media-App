@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:social_media_app/pages/chat_page.dart';
+import 'package:social_media_app/pages/new_chat_page.dart';
 import 'package:social_media_app/services/chat/chat_services.dart';
 
 import '../widgets/my_user_tile.dart';
@@ -115,7 +116,7 @@ class _UsersPageState extends State<UsersPage> {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => ChatPage(
+                    builder: (context) => NewChatPage(
                           imageURL: userData['profilePicture'],
                           userID: FirebaseAuth.instance.currentUser!.uid,
                           receiverUsername: userData['username'],

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class ChatBubble extends StatefulWidget {
+  final bool showOptions;
   final Map<String, dynamic>? replyMessage;
   final String message;
   final bool isCurrentUser;
@@ -15,10 +16,11 @@ class ChatBubble extends StatefulWidget {
     required this.timestamp,
     required this.status,
     this.replyMessage,
+    required this.showOptions,
   });
 
   @override
-  _ChatBubbleState createState() => _ChatBubbleState();
+  State<ChatBubble> createState() => _ChatBubbleState();
 }
 
 class _ChatBubbleState extends State<ChatBubble> {

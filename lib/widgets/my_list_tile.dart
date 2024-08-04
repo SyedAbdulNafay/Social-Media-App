@@ -229,7 +229,7 @@ class _MyListTileState extends State<MyListTile> {
     String formattedDate = '${dateTime.day}/${dateTime.month}/${dateTime.year}';
 
     return Padding(
-        padding: const EdgeInsets.only(left: 25, right: 25, bottom: 10),
+        padding: const EdgeInsets.only(left: 25, right: 25, bottom: 10, top: 10),
         child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
