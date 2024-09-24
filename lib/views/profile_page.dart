@@ -5,10 +5,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:social_media_app/database/posts_firestore.dart';
-import 'package:social_media_app/widgets/my_list_tile.dart';
-import 'package:social_media_app/widgets/my_text_box.dart';
-import 'package:social_media_app/widgets/my_text_field.dart';
+import 'package:social_media_app/models/database/posts_firestore.dart';
+import 'package:social_media_app/services/widgets/my_list_tile.dart';
+import 'package:social_media_app/services/widgets/my_text_box.dart';
+import 'package:social_media_app/services/widgets/my_text_field.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -36,6 +36,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   saveProfile() async {
+    if (image == null) return;
     final ref = FirebaseStorage.instance.ref().child("images/${image!.name}");
 
     uploadTask = ref.putFile(File(image!.path));

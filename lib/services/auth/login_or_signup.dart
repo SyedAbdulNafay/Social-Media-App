@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:social_media_app/pages/login_page.dart';
-import 'package:social_media_app/pages/signup_page.dart';
+import 'package:get/get.dart';
+import 'package:social_media_app/controllers/auth_controller.dart';
+import 'package:social_media_app/views/new_login_page.dart';
+
+import '../../views/new_signup_page.dart';
 
 class LoginOrSignup extends StatefulWidget {
   const LoginOrSignup({super.key});
@@ -10,19 +13,16 @@ class LoginOrSignup extends StatefulWidget {
 }
 
 class _LoginOrSignupState extends State<LoginOrSignup> {
-  bool showLoginPage = true;
+  final AuthController authController = Get.find<AuthController>();
 
-  void togglePages(){
-    setState(() {
-      showLoginPage = !showLoginPage;
-    });
-  }
   @override
   Widget build(BuildContext context) {
-    if (showLoginPage) {
-      return LoginPage(onTap: togglePages);
-    } else {
-      return SignUpPage(onTap: togglePages);
-    }
+    return GetBuilder<AuthController>(
+      builder: (controller) {
+        return controller.showLoginPage.value
+            ? const NewLoginPage()
+            : const NewSignupPage();
+      },
+    );
   }
 }

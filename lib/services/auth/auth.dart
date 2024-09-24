@@ -1,24 +1,20 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:social_media_app/pages/navigation_page.dart';
+import 'package:get/get.dart';
+import 'package:social_media_app/controllers/auth_controller.dart';
 import 'package:social_media_app/services/auth/login_or_signup.dart';
+import 'package:social_media_app/views/new_navigation_page.dart';
 
 class AuthPage extends StatelessWidget {
   const AuthPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final AuthController authController = Get.put(AuthController());
+
     return Scaffold(
-      body: StreamBuilder(
-        stream: FirebaseAuth.instance.authStateChanges(),
-        builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
-          if (snapshot.hasData) {
-            return const NavigationPage();
-          } else {
-            return const LoginOrSignup();
-          }
-        },
-      ),
+      body: Obx(() => authController.isUserLoggedIn.value
+          ? const NewNavigationPage()
+          : const LoginOrSignup()),
     );
   }
 }

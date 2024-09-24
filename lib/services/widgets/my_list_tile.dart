@@ -1,12 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:social_media_app/widgets/my_comment_box.dart';
-import 'package:social_media_app/widgets/my_comment_button.dart';
-import 'package:social_media_app/widgets/my_delete_button.dart';
-import 'package:social_media_app/widgets/my_like_button.dart';
-import 'package:social_media_app/widgets/my_post_button.dart';
-import 'package:social_media_app/widgets/my_text_field.dart';
+import 'package:get/get.dart';
+import 'package:social_media_app/services/widgets/my_comment_box.dart';
+import 'package:social_media_app/services/widgets/my_comment_button.dart';
+import 'package:social_media_app/services/widgets/my_delete_button.dart';
+import 'package:social_media_app/services/widgets/my_like_button.dart';
+import 'package:social_media_app/services/widgets/my_post_button.dart';
+import 'package:social_media_app/services/widgets/my_text_field.dart';
 
 class MyListTile extends StatefulWidget {
   final String title;
@@ -61,8 +62,8 @@ class _MyListTileState extends State<MyListTile> {
             child: Container(
                 height: MediaQuery.of(context).size.height * 0.7,
                 padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.background),
+                decoration:
+                    BoxDecoration(color: Theme.of(context).colorScheme.surface),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -85,8 +86,7 @@ class _MyListTileState extends State<MyListTile> {
                                   if (!snapshot.hasData) {
                                     return Center(
                                         child: CircularProgressIndicator(
-                                            color: Theme.of(context)
-                                                .colorScheme
+                                            color: Get.theme.colorScheme
                                                 .inversePrimary));
                                   }
                                   if (snapshot.hasError) {
@@ -195,9 +195,9 @@ class _MyListTileState extends State<MyListTile> {
                 TextButton(
                     style: ButtonStyle(
                         backgroundColor: WidgetStateProperty.all(
-                            Theme.of(context).colorScheme.primary),
+                            Get.theme.colorScheme.primary),
                         foregroundColor: WidgetStateProperty.all(
-                            Theme.of(context).colorScheme.secondary)),
+                            Get.theme.colorScheme.secondary)),
                     onPressed: () => Navigator.pop(context),
                     child: const Text("No")),
               ],
@@ -229,11 +229,12 @@ class _MyListTileState extends State<MyListTile> {
     String formattedDate = '${dateTime.day}/${dateTime.month}/${dateTime.year}';
 
     return Padding(
-        padding: const EdgeInsets.only(left: 25, right: 25, bottom: 10, top: 10),
+        padding:
+            const EdgeInsets.only(left: 25, right: 25, bottom: 10, top: 10),
         child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.secondary,
+              color: Get.theme.colorScheme.secondary,
               borderRadius: BorderRadius.circular(12)),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -260,7 +261,7 @@ class _MyListTileState extends State<MyListTile> {
                             widget.title,
                             style: TextStyle(
                                 fontSize: 15,
-                                color: Theme.of(context).colorScheme.secondary),
+                                color: Get.theme.colorScheme.secondary),
                           ),
                           content: SingleChildScrollView(
                             child: SizedBox(
@@ -270,11 +271,9 @@ class _MyListTileState extends State<MyListTile> {
                             TextButton(
                                 style: ButtonStyle(
                                     backgroundColor: WidgetStateProperty.all(
-                                        Theme.of(context).colorScheme.primary),
+                                        Get.theme.colorScheme.primary),
                                     foregroundColor: WidgetStateProperty.all(
-                                        Theme.of(context)
-                                            .colorScheme
-                                            .secondary)),
+                                        Get.theme.colorScheme.secondary)),
                                 onPressed: () => Navigator.pop(context),
                                 child: const Text("Close"))
                           ],
@@ -323,8 +322,7 @@ class _MyListTileState extends State<MyListTile> {
                   ),
                   Text(
                     formattedDate,
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.secondary),
+                    style: TextStyle(color: Get.theme.colorScheme.secondary),
                   )
                 ],
               )

@@ -20,7 +20,7 @@ class MyUsersBox extends StatelessWidget {
             Container(
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(24),
-                  color: Theme.of(context).colorScheme.background),
+                  color: Theme.of(context).colorScheme.surface),
               padding: const EdgeInsets.all(25),
               child: const Icon(
                 Icons.person,

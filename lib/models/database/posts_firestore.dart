@@ -6,8 +6,7 @@ class FirestoreDatabase {
   final User? user = FirebaseAuth.instance.currentUser;
 
   //get collection of posts
-  final CollectionReference posts =
-      FirebaseFirestore.instance.collection("posts");
+  CollectionReference posts = FirebaseFirestore.instance.collection("posts");
 
   //add a post
   Future<void> addPost(String message) {

@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 
 class MyTextField extends StatelessWidget {
-  final bool isReplying;
+  final bool? isReplying;
   final String? Function(String?)? validator;
   final String? hintText;
-  final bool obscureText;
+  final bool? obscureText;
   final TextEditingController? controller;
   final FocusNode? focusNode;
   final void Function(String)? onChanged;
   const MyTextField(
       {super.key,
       this.hintText,
-      required this.obscureText,
+      this.obscureText,
       this.controller,
       this.validator,
       this.focusNode,
       this.onChanged,
-      required this.isReplying});
+      this.isReplying});
 
   @override
   Widget build(BuildContext context) {
@@ -29,11 +29,11 @@ class MyTextField extends StatelessWidget {
         focusNode: focusNode,
         validator: validator,
         controller: controller,
-        obscureText: obscureText,
+        obscureText: obscureText ?? false,
         decoration: InputDecoration(
           border: OutlineInputBorder(
             borderSide: BorderSide.none,
-            borderRadius: isReplying
+            borderRadius: isReplying ?? false
                 ? const BorderRadius.only(
                     topLeft: Radius.zero,
                     topRight: Radius.zero,

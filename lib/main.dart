@@ -1,24 +1,16 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:social_media_app/services/auth/auth.dart';
-import 'package:social_media_app/services/auth/login_or_signup.dart';
 import 'package:social_media_app/firebase_options.dart';
-import 'package:social_media_app/pages/feed_page.dart';
-import 'package:social_media_app/pages/profile_page.dart';
-import 'package:social_media_app/pages/users_page.dart';
-import 'package:social_media_app/theme/dartkmode.dart';
-import 'package:social_media_app/theme/lightmode.dart';
-import 'package:social_media_app/theme/theme_manager.dart';
-import 'package:provider/provider.dart';
+import 'package:social_media_app/services/theme/dartkmode.dart';
+import 'package:social_media_app/services/theme/lightmode.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  final themeManager = ThemeManager();
-  runApp(ChangeNotifierProvider<ThemeManager>(
-    create: (_) => themeManager,
-    child: const MyApp(),
-  ));
+
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -26,20 +18,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ThemeManager>(
-      builder: (context, themeManager, child) {
-        return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          home: const AuthPage(),
-          theme: themeManager.isDarkMode ? darkTheme : lightTheme,
-          routes: {
-            '/login_or_signup_page': (context) => const LoginOrSignup(),
-            '/home_page': (context) => const FeedPage(),
-            '/profile_page': (context) => const ProfilePage(),
-            '/users_page': (context) => const UsersPage(),
-          },
-        );
-      },
+    return GetMaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: const AuthPage(),
+      theme: lightTheme,
+      darkTheme: darkTheme,
     );
   }
 }

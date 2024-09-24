@@ -94,9 +94,9 @@ class ChatServices {
         .where("timestamp", isEqualTo: timestamp)
         .get()
         .then((snapshot) {
-      snapshot.docs.forEach((doc) {
+      for (var doc in snapshot.docs) {
         doc.reference.update({'status': status});
-      });
+      }
     });
   }
 

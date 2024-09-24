@@ -2,59 +2,74 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:social_media_app/theme/theme_manager.dart';
-import 'package:social_media_app/widgets/my_button.dart';
-import 'package:social_media_app/widgets/my_text_field.dart';
+import 'package:social_media_app/services/theme/theme_manager.dart';
+import 'package:social_media_app/services/widgets/my_button.dart';
+import 'package:social_media_app/services/widgets/my_text_field.dart';
 
-class LoginPage extends StatefulWidget {
+class SignUpPage extends StatefulWidget {
   final void Function()? onTap;
-  const LoginPage({super.key, required this.onTap});
+  const SignUpPage({super.key, required this.onTap});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<SignUpPage> createState() => _SignUpPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _SignUpPageState extends State<SignUpPage> {
   final _formKey = GlobalKey<FormState>();
+  bool isSigningIn = false;
 
-  bool isLoggingIn = false;
-
-  Future<void> login() async {
+  Future<void> register() async {
     if (_formKey.currentState!.validate()) {
-      isLoggingIn = true;
+      isSigningIn = true;
       try {
-        final query = FirebaseFirestore.instance
+        final usernameQuery = await FirebaseFirestore.instance
             .collection("Users")
-            .where("email", isEqualTo: _emailcontroller.text);
-        final querySnapshot = await query.get();
-
-        if (querySnapshot.docs.isEmpty) {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: const Text("This email is not valid")));
-          isLoggingIn = false;
+            .where("username", isEqualTo: _usernamecontroller.text)
+            .get();
+        if (usernameQuery.docs.isNotEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Username is already in use")));
+          isSigningIn = false;
           return;
         }
-
-        UserCredential? user = await FirebaseAuth.instance
-            .signInWithEmailAndPassword(
+        UserCredential? userCredential = await FirebaseAuth.instance
+            .createUserWithEmailAndPassword(
                 email: _emailcontroller.text,
                 password: _passwordcontroller.text);
+
+        createUserDocument(userCredential);
       } on FirebaseAuthException catch (e) {
-        if (e.code == 'user-not-found' || e.code == 'wrong password') {
-          ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Invalid email or password")));
+        if (e.code == 'email-already-in-use') {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text("Email already in use"),
+          ));
         } else {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text("Error: $e"),
           ));
         }
       }
-      isLoggingIn = false;
+      isSigningIn = false;
+    }
+  }
+
+  Future<void> createUserDocument(UserCredential? userCredential) async {
+    if (userCredential != null && userCredential.user != null) {
+      await FirebaseFirestore.instance
+          .collection("Users")
+          .doc(userCredential.user!.uid)
+          .set({
+        'userId': userCredential.user!.uid,
+        'email': userCredential.user!.email,
+        'username': _usernamecontroller.text,
+        'bio': 'Empty bio...',
+        'profilePicture': 'not selected'
+      });
     }
   }
 
   //validators
-  Future<String?> emailValidator(String? value) async {
+  String? emailValidator(String? value) {
     if (value == null || value.isEmpty) {
       return "This field cannot be empty";
     }
@@ -65,10 +80,37 @@ class _LoginPageState extends State<LoginPage> {
     return null;
   }
 
+  String? passwordValidator(String? value) {
+    if (value == null || value.isEmpty) {
+      return "This field cannot be empty";
+    }
+    if (value.length < 8) {
+      return "Password must be longer than 8 characters";
+    }
+    return null;
+  }
+
+  String? confirmPWValidator(String? value) {
+    if (value == null || value.isEmpty) {
+      return "This field cannot be empty";
+    }
+    if (value.length < 8) {
+      return "Password must be longer than 8 characters";
+    }
+    if (_confirmPWcontroller.text != _passwordcontroller.text) {
+      return "Passwords do not match";
+    }
+    return null;
+  }
+
   //text controllers
+  final TextEditingController _usernamecontroller = TextEditingController();
+
   final TextEditingController _emailcontroller = TextEditingController();
 
   final TextEditingController _passwordcontroller = TextEditingController();
+
+  final TextEditingController _confirmPWcontroller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +121,7 @@ class _LoginPageState extends State<LoginPage> {
       body: SafeArea(
         child: Center(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 25),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Form(
               key: _formKey,
               child: SingleChildScrollView(
@@ -107,9 +149,16 @@ class _LoginPageState extends State<LoginPage> {
                       height: 50,
                     ),
 
+                    MyTextField(
+                      isReplying: false,
+                        hintText: "Username",
+                        obscureText: false,
+                        controller: _usernamecontroller),
+
                     //email text field
                     MyTextField(
                       isReplying: false,
+                        validator: emailValidator,
                         hintText: "Email",
                         obscureText: false,
                         controller: _emailcontroller),
@@ -117,31 +166,32 @@ class _LoginPageState extends State<LoginPage> {
                     //password text field
                     MyTextField(
                       isReplying: false,
+                        validator: passwordValidator,
                         hintText: "Password",
                         obscureText: true,
                         controller: _passwordcontroller),
-                    const SizedBox(
-                      height: 10,
-                    ),
 
-                    //forgot password
-                    const Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [Text("Forgot password?")],
-                    ),
+                    //confirm password text field
+                    MyTextField(
+                      isReplying: false,
+                        validator: confirmPWValidator,
+                        hintText: "Confirm Password",
+                        obscureText: true,
+                        controller: _confirmPWcontroller),
                     const SizedBox(
-                      height: 25,
+                      height: 20,
                     ),
-
                     //log in button
                     MyButton(
-                      onTap: login,
-                      child: isLoggingIn
+                      onTap: register,
+                      child: isSigningIn
                           ? const CircularProgressIndicator()
                           : const Text(
-                              "Log In",
+                              "Sign Up",
                               style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold),
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                     ),
                     const SizedBox(
@@ -152,14 +202,14 @@ class _LoginPageState extends State<LoginPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text("Dont have an account?"),
+                        const Text("Already have an account?"),
                         const SizedBox(
                           width: 10,
                         ),
                         GestureDetector(
                             onTap: widget.onTap,
                             child: Text(
-                              "Sign In",
+                              "Log In",
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: Theme.of(context)

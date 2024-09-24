@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:social_media_app/services/theme/theme_manager.dart';
 
 class ChatBubble extends StatefulWidget {
   final bool showOptions;
@@ -47,6 +48,7 @@ class _ChatBubbleState extends State<ChatBubble> {
 
   @override
   Widget build(BuildContext context) {
+    ThemeManager theme = ThemeManager();
     DateTime dateTime = widget.timestamp.toDate();
 
     IconData statusIcon;
@@ -140,7 +142,16 @@ class _ChatBubbleState extends State<ChatBubble> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(widget.message),
+                Text(
+                  widget.message,
+                  style: TextStyle(
+                    color: theme.isDarkMode
+                        ? widget.isCurrentUser
+                            ? Colors.white
+                            : Colors.white
+                        : Colors.black,
+                  ),
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
