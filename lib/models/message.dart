@@ -9,6 +9,7 @@ class Message {
   final Timestamp timestamp;
   final String status;
   final Map<String, dynamic>? replyMessage;
+  String? audioURL;
 
   Message({
     required this.senderId,
@@ -19,6 +20,7 @@ class Message {
     this.status = 'sending',
     this.replyMessage,
     this.id,
+    this.audioURL,
   });
 
   Map<String, dynamic> toMap() {
@@ -30,6 +32,7 @@ class Message {
       'message': message,
       'timestamp': timestamp,
       'status': status,
+      if (audioURL != null) 'audioURL': audioURL,
       if (replyMessage != null) 'replyMessage': replyMessage,
     };
   }

@@ -57,7 +57,8 @@ class ChatServices {
 
   //send message
   Future<void> sendMessage(
-      String receiverId, String messageText, Message? replyMessage) async {
+      String receiverId, String messageText, Message? replyMessage,
+      {String? audioURL}) async {
     final String currentUserId = _auth.currentUser!.uid;
     final String currentUserEmail = _auth.currentUser!.email!;
     final Timestamp timestamp = Timestamp.now();
@@ -69,6 +70,7 @@ class ChatServices {
         receiverId: receiverId,
         message: messageText,
         timestamp: timestamp,
+        audioURL: audioURL,
         status: 'sending');
 
     //construct chat room ID for the two users (sorted to ensure uniqueness)

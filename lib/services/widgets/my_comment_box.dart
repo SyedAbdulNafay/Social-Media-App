@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class MyCommentBox extends StatelessWidget {
   final String text;
@@ -18,32 +19,30 @@ class MyCommentBox extends StatelessWidget {
       margin: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.secondary,
+          color: Get.theme.colorScheme.secondary,
           borderRadius: BorderRadius.circular(12)),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                user,
-                style: const TextStyle(fontSize: 12),
-              ),
-              SizedBox(
-                width: 290,
-                child: Text(
+          Flexible(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  user,
+                  style: const TextStyle(fontSize: 12),
+                ),
+                Text(
                   text,
                   style: const TextStyle(fontSize: 16),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
           Text(
             "${dateTime.day}/${dateTime.month}/${dateTime.year}",
-            style: TextStyle(
-                color: Theme.of(context).colorScheme.secondary, fontSize: 12),
+            style: const TextStyle(fontSize: 12),
           )
         ],
       ),

@@ -6,7 +6,7 @@ import 'package:social_media_app/views/new_users_page.dart';
 import 'package:social_media_app/views/profile_page.dart';
 
 class NavigationController extends GetxController {
-  var _selectedIndex = 0.obs;
+  final _selectedIndex = 0.obs;
 
   int get selectedIndex => _selectedIndex.value;
 

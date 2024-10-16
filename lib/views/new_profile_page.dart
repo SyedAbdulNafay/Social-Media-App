@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:social_media_app/controllers/profile_controller.dart';
+import 'package:social_media_app/services/widgets/my_new_list_tile.dart';
 
-import '../services/widgets/my_list_tile.dart';
 import '../services/widgets/my_text_box.dart';
 
 class NewProfilePage extends StatelessWidget {
@@ -163,7 +163,7 @@ class NewProfilePage extends StatelessWidget {
                                   itemCount: profileController.posts.length,
                                   itemBuilder: (context, index) {
                                     final post = profileController.posts[index];
-                                    return MyListTile(
+                                    return MyNewListTile(
                                         title: post['UserEmail'],
                                         subtitle: post['message'],
                                         timestamp: post['timestamp'],

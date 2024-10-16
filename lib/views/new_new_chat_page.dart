@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:social_media_app/controllers/chat_controller.dart';
+import 'package:social_media_app/services/widgets/my_voice_message_button.dart';
 import 'package:swipe_to/swipe_to.dart';
 
 import '../models/message.dart';
@@ -29,6 +30,11 @@ class NewNewChatPage extends StatelessWidget {
         receiverID: receiverID,
         userID: userID,
         receiverUsername: receiverUsername));
+
+    chatController.messageController.addListener(() {
+      chatController.isMessageFieldEmpty.value =
+          chatController.messageController.text.isEmpty;
+    });
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -62,6 +68,7 @@ class NewNewChatPage extends StatelessWidget {
         children: [
           Expanded(
               child: Obx(() => ListView.builder(
+                    controller: chatController.scrollController,
                     itemCount: chatController.messages.length,
                     itemBuilder: (BuildContext context, int index) {
                       final data = chatController.messages[index];
@@ -82,6 +89,7 @@ class NewNewChatPage extends StatelessWidget {
                         message: fata['message'],
                         timestamp: fata['timestamp'],
                         status: fata['status'],
+                        audioURL: fata['audioURL'],
                       );
 
                       return SwipeTo(
@@ -98,6 +106,8 @@ class NewNewChatPage extends StatelessWidget {
                             timestamp: message.timestamp,
                             status: message.status,
                             showOptions: false,
+                            isVoiceMessage: message.audioURL != null,
+                            audioURL: message.audioURL,
                           ),
                         ),
                       );
@@ -141,12 +151,16 @@ class NewNewChatPage extends StatelessWidget {
                       ],
                     ),
                   ),
-                  MyMessageButton(
-                    onTap: () {
-                      chatController
-                          .sendMessage(chatController.messageController.text);
-                    },
-                  )
+                  Obx(() => chatController.isMessageFieldEmpty.value
+                      ? MyVoiceMessageButton(
+                          onTap: chatController.recordVoiceMessage,
+                        )
+                      : MyMessageButton(
+                          onTap: () {
+                            chatController.sendMessage(
+                                chatController.messageController.text);
+                          },
+                        ))
                 ],
               ))
         ],

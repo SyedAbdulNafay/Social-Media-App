@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:social_media_app/controllers/chat_controller.dart';
 
-class MyMessageButton extends StatelessWidget {
+class MyVoiceMessageButton extends StatelessWidget {
   final void Function()? onTap;
-  const MyMessageButton({super.key, this.onTap});
+  const MyVoiceMessageButton({super.key, this.onTap});
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.find<ChatController>();
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -15,10 +17,10 @@ class MyMessageButton extends StatelessWidget {
         decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: Get.theme.colorScheme.inversePrimary),
-        child: const Icon(
-          Icons.arrow_upward_rounded,
-          color: Colors.black,
-        ),
+        child: Obx(() => Icon(
+              Icons.mic,
+              color: controller.isRecording.value ? Colors.red : Colors.black,
+            )),
       ),
     );
   }

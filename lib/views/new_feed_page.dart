@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:social_media_app/controllers/posts_controller.dart';
 
-import '../services/widgets/my_list_tile.dart';
+import '../services/widgets/my_new_list_tile.dart';
 
 class NewFeedPage extends StatelessWidget {
   const NewFeedPage({super.key});
@@ -14,14 +14,16 @@ class NewFeedPage extends StatelessWidget {
     final PostsController controller = Get.put(PostsController());
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: Get.theme.colorScheme.surface,
       appBar: AppBar(
         actions: [
           IconButton(
             icon: Icon(Get.isDarkMode ? Icons.dark_mode : Icons.light_mode),
             onPressed: () {
+              debugPrint("Changing theme");
               Get.changeTheme(
                   Get.isDarkMode ? ThemeData.light() : ThemeData.dark());
+              debugPrint("Changed theme");
             },
           )
         ],
@@ -52,7 +54,7 @@ class NewFeedPage extends StatelessWidget {
                 String email = post['UserEmail'];
                 Timestamp timestamp = post['timestamp'];
 
-                return MyListTile(
+                return MyNewListTile(
                   title: email,
                   subtitle: message,
                   timestamp: timestamp,

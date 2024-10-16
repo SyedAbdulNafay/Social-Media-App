@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:social_media_app/services/theme/theme_manager.dart';
+import 'package:get/get.dart';
+
+import 'my_voice_message_bubble.dart';
 
 class ChatBubble extends StatefulWidget {
   final bool showOptions;
@@ -9,6 +11,8 @@ class ChatBubble extends StatefulWidget {
   final bool isCurrentUser;
   final Timestamp timestamp;
   final String status;
+  final bool isVoiceMessage;
+  final String? audioURL;
 
   const ChatBubble({
     super.key,
@@ -18,6 +22,8 @@ class ChatBubble extends StatefulWidget {
     required this.status,
     this.replyMessage,
     required this.showOptions,
+    this.isVoiceMessage = false,
+    this.audioURL,
   });
 
   @override
@@ -48,7 +54,14 @@ class _ChatBubbleState extends State<ChatBubble> {
 
   @override
   Widget build(BuildContext context) {
-    ThemeManager theme = ThemeManager();
+    if (widget.isVoiceMessage && widget.audioURL != null) {
+      return MyVoiceMessageBubble(
+        isCurrentUser: widget.isCurrentUser,
+        audioURL: widget.audioURL!,
+        timestamp: widget.timestamp,
+        status: widget.status,
+      );
+    }
     DateTime dateTime = widget.timestamp.toDate();
 
     IconData statusIcon;
@@ -80,14 +93,14 @@ class _ChatBubbleState extends State<ChatBubble> {
             padding: const EdgeInsets.only(left: 8, right: 8, top: 8),
             decoration: BoxDecoration(
                 color: widget.isCurrentUser
-                    ? Theme.of(context).colorScheme.inversePrimary
-                    : Theme.of(context).colorScheme.primary,
+                    ? Get.theme.colorScheme.inversePrimary
+                    : Get.theme.colorScheme.primary,
                 borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(15),
                     topRight: Radius.circular(15))),
             child: Container(
               decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.secondary,
+                  color: Get.theme.colorScheme.secondary,
                   borderRadius: const BorderRadius.all(Radius.circular(5))),
               child: IntrinsicHeight(
                 child: Row(
@@ -97,7 +110,7 @@ class _ChatBubbleState extends State<ChatBubble> {
                       decoration: BoxDecoration(
                           color: widget.isCurrentUser
                               ? Colors.black
-                              : Theme.of(context).colorScheme.inversePrimary,
+                              : Get.theme.colorScheme.inversePrimary,
                           borderRadius: const BorderRadius.only(
                               topLeft: Radius.circular(5),
                               bottomLeft: Radius.circular(5))),
@@ -136,8 +149,8 @@ class _ChatBubbleState extends State<ChatBubble> {
                       bottomLeft: Radius.circular(12),
                       bottomRight: Radius.circular(12)),
               color: widget.isCurrentUser
-                  ? Theme.of(context).colorScheme.inversePrimary
-                  : Theme.of(context).colorScheme.primary,
+                  ? Get.theme.colorScheme.inversePrimary
+                  : Get.theme.colorScheme.primary,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -145,7 +158,7 @@ class _ChatBubbleState extends State<ChatBubble> {
                 Text(
                   widget.message,
                   style: TextStyle(
-                    color: theme.isDarkMode
+                    color: Get.isDarkMode
                         ? widget.isCurrentUser
                             ? Colors.white
                             : Colors.white

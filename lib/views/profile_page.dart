@@ -6,9 +6,10 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:social_media_app/models/database/posts_firestore.dart';
-import 'package:social_media_app/services/widgets/my_list_tile.dart';
 import 'package:social_media_app/services/widgets/my_text_box.dart';
 import 'package:social_media_app/services/widgets/my_text_field.dart';
+
+import '../services/widgets/my_new_list_tile.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -271,7 +272,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               itemCount: posts.length,
                               itemBuilder: (context, index) {
                                 final post = posts[index];
-                                return MyListTile(
+                                return MyNewListTile(
                                     title: post['UserEmail'],
                                     subtitle: post['message'],
                                     timestamp: post['timestamp'],
